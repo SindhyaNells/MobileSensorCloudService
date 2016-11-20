@@ -78,6 +78,22 @@ public class SensorServiceController {
         return new ResponseEntity<Sensor>(sensor,HttpStatus.CREATED);
     }
 
+    @RequestMapping(value="/virtualsensor",method=RequestMethod.POST)
+    public ResponseEntity<VirtualSensor> createVirtualSensor(@RequestBody VirtualSensor virtualSensor){
+
+        VirtualSensorDAO virtualSensorDAO=new VirtualSensorDAO();
+        virtualSensorDAO.createSensor(virtualSensor);
+        return new ResponseEntity<VirtualSensor>(virtualSensor,HttpStatus.CREATED);
+
+    }
+
+    @RequestMapping(value = "virtualsensor",method=RequestMethod.GET)
+    public List virtualsensors(@RequestParam(value = "sensor_id", required = false,defaultValue = "0") int sensor_id){
+        VirtualSensorDAO virtualsensorDAO=new VirtualSensorDAO();
+        List<Sensor> sensorList=virtualsensorDAO.virtualSensorList(sensor_id);
+        return sensorList;
+    }
+
     @RequestMapping(value="/sensors/{id}",method=RequestMethod.PUT)
     public ResponseEntity<Sensor> updateSensor(@PathVariable("id") int id,@RequestBody Sensor sensor){
 

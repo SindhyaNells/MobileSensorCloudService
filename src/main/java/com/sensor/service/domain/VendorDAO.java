@@ -17,6 +17,8 @@ import java.util.Map;
  */
 public class VendorDAO {
 
+    //public static String profile_path="../resources/credentials";
+    //public static String profile_name="default";
     private List<Vendor> vendor_list=new ArrayList<>();
     private List<Vendor> vendorResult=new ArrayList<>();
     static AmazonDynamoDBClient client = new AmazonDynamoDBClient(new ProfileCredentialsProvider())
