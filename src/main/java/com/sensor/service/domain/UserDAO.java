@@ -6,6 +6,8 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.sensor.service.model.Sensor;
+import com.sensor.service.model.Users;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,6 +75,13 @@ public class UserDAO {
         newUserItem.setPlanId(user.getPlanId());
 
         mapper.save(newUserItem);
+
+    }
+
+    public void updateUser(Users users){
+
+        DynamoDBMapper mapper = new DynamoDBMapper(client);
+        mapper.save(users);
 
     }
 

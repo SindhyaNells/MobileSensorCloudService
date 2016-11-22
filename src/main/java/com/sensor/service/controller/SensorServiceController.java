@@ -1,10 +1,15 @@
 package com.sensor.service.controller;
 
 import com.sensor.service.domain.*;
+import com.sensor.service.model.*;
+import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
+import org.omg.CORBA.Request;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -87,11 +92,25 @@ public class SensorServiceController {
 
     }
 
-    @RequestMapping(value = "virtualsensor",method=RequestMethod.GET)
-    public List virtualsensors(@RequestParam(value = "sensor_id", required = false,defaultValue = "0") int sensor_id){
+    @RequestMapping(value = "/virtualsensor",method=RequestMethod.GET)
+    public List virtualsensors(@RequestParam(value = "user_email", required = false,defaultValue = "0") String user_email){
         VirtualSensorDAO virtualsensorDAO=new VirtualSensorDAO();
-        List<Sensor> sensorList=virtualsensorDAO.virtualSensorList(sensor_id);
+        List<Sensor> sensorList=virtualsensorDAO.virtualSensorList(user_email);
         return sensorList;
+    }
+
+    @RequestMapping(value="/users",method = RequestMethod.PUT)
+    public ResponseEntity<Users> updateUser(@RequestBody Users users){
+        UserDAO userDAO=new UserDAO();
+        Users newUser=new Users();
+
+        newUser.setUserEmail(users.getUserEmail());
+        newUser.setUserName(users.getUserName());
+        newUser.setUserPassword(users.getUserPassword());
+        newUser.setPlanId(users.getPlanId());
+
+        userDAO.updateUser(newUser);
+        return new ResponseEntity<Users>(newUser,HttpStatus.OK);
     }
 
     @RequestMapping(value="/sensors/{id}",method=RequestMethod.PUT)
@@ -127,6 +146,21 @@ public class SensorServiceController {
         sensorDAO.deleteSensor(id);
         return new ResponseEntity<Sensor>(delSensor,HttpStatus.NO_CONTENT);
 
+    }
+
+    @RequestMapping(value="/sensor_data/{id}", method=RequestMethod.GET)
+    public ResponseEntity<SensorDataResponse> getAllSensorData(@PathVariable("id") int id){
+
+        SensorDataDAO sd = new SensorDataDAO();
+        Hashtable<Date, Integer> sensorData =  sd.sensorDataList(1);
+
+        if (sensorData==null)
+            return new ResponseEntity<SensorDataResponse>(HttpStatus.NOT_FOUND);
+
+        SensorDataResponse ssr = new SensorDataResponse();
+        ssr.setSensorData(sensorData);
+        ssr.setSensorDataPoint("Temperature");
+        return new ResponseEntity<SensorDataResponse>(ssr, HttpStatus.OK);
     }
 
 }
