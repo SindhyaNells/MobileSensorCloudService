@@ -82,7 +82,6 @@ public class SensorDAO {
 
     public Sensor findBySensorId(int sensor_id){
 
-        client.withRegion(Regions.US_WEST_2);
         DynamoDBMapper mapper = new DynamoDBMapper(client);
 
         Map<String, AttributeValue> filterMap = new HashMap<>();

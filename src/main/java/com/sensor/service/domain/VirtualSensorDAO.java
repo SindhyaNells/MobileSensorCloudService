@@ -138,5 +138,35 @@ public class VirtualSensorDAO {
         return virtual_sensor_list;
     }
 
+    public VirtualSensor findByVirtualSensorId(int virtual_sensor_id){
+
+        DynamoDBMapper mapper = new DynamoDBMapper(client);
+
+        Map<String, AttributeValue> filterMap = new HashMap<>();
+        filterMap.put(":val1", new AttributeValue().withN(String.valueOf(virtual_sensor_id)));
+
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
+                .withFilterExpression("virtual_sensor_id=:val1").withExpressionAttributeValues(filterMap);
+        virtualSensorResult=mapper.scan(VirtualSensor.class,scanExpression);
+
+        VirtualSensor virtualsensorObj=null;
+        if(!(virtualSensorResult.size()==0)) {
+            virtualsensorObj = new VirtualSensor();
+            virtualsensorObj.setVirtualSensorId(virtualSensorResult.get(0).getVirtualSensorId());
+            virtualsensorObj.setVirtualSensorName(virtualSensorResult.get(0).getVirtualSensorName());
+            virtualsensorObj.setSensorId(virtualSensorResult.get(0).getSensorId());
+            virtualsensorObj.setUserEmail(virtualSensorResult.get(0).getUserEmail());
+        }
+
+        return virtualsensorObj;
+    }
+
+    public void deleteVirtualSensor(int virtual_sensor_id){
+
+        DynamoDBMapper mapper=new DynamoDBMapper(client);
+        VirtualSensor virtualsensor=mapper.load(VirtualSensor.class,virtual_sensor_id);
+        mapper.delete(virtualsensor);
+    }
+
 
 }

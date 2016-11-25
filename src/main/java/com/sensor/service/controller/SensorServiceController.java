@@ -148,6 +148,18 @@ public class SensorServiceController {
 
     }
 
+    @RequestMapping(value = "/virtualsensor/{id}",method = RequestMethod.DELETE)
+    public ResponseEntity<VirtualSensor> deleteVirtualSensor(@PathVariable("id") int id){
+        VirtualSensorDAO virtualSensorDAO=new VirtualSensorDAO();
+        VirtualSensor virtualSensor=virtualSensorDAO.findByVirtualSensorId(id);
+        if(virtualSensor==null){
+            return new ResponseEntity<VirtualSensor>(HttpStatus.NOT_FOUND);
+        }
+
+        virtualSensorDAO.deleteVirtualSensor(id);
+        return new ResponseEntity<VirtualSensor>(virtualSensor,HttpStatus.NO_CONTENT);
+    }
+
     @RequestMapping(value="/sensor_data/{id}", method=RequestMethod.GET)
     public ResponseEntity<SensorDataResponse> getAllSensorData(@PathVariable("id") int id){
 
