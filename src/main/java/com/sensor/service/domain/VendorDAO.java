@@ -6,6 +6,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.sensor.service.model.ApiConstants;
 import com.sensor.service.model.Vendor;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class VendorDAO {
     //public static String profile_name="default";
     private List<Vendor> vendor_list=new ArrayList<>();
     private List<Vendor> vendorResult=new ArrayList<>();
-    static AmazonDynamoDBClient client = new AmazonDynamoDBClient(new ProfileCredentialsProvider())
+    static AmazonDynamoDBClient client = new AmazonDynamoDBClient(new ProfileCredentialsProvider(ApiConstants.path,ApiConstants.profile))
             .withRegion(Regions.US_WEST_2);
 
 

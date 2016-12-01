@@ -6,6 +6,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.sensor.service.model.ApiConstants;
 import com.sensor.service.model.Sensor;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.Map;
 public class SensorDAO {
     private List<Sensor> sensor_list=new ArrayList<>();
     private List<Sensor> sensorResult=new ArrayList<>();
-    static AmazonDynamoDBClient client = new AmazonDynamoDBClient(new ProfileCredentialsProvider()).withRegion(Regions.US_WEST_2);
+    static AmazonDynamoDBClient client = new AmazonDynamoDBClient(new ProfileCredentialsProvider(ApiConstants.path,ApiConstants.profile)).withRegion(Regions.US_WEST_2);
 
     public List sensorList(String vendorEmail){
 
@@ -64,11 +65,16 @@ public class SensorDAO {
 
     public void createSensor(Sensor sensor){
 
-        Sensor newSensorItem=new Sensor();
-
         DynamoDBMapper mapper=new DynamoDBMapper(client);
 
-        newSensorItem.setSensorId(sensor.getSensorId());
+        List<Sensor> sensorScanList=new ArrayList<>();
+        DynamoDBScanExpression scanExpression=new DynamoDBScanExpression().withLimit(50);
+        sensorScanList=mapper.scan(Sensor.class,scanExpression);
+        int id=sensorScanList.size()+1;
+
+        Sensor newSensorItem=new Sensor();
+
+        newSensorItem.setSensorId(id);
         newSensorItem.setSensorName(sensor.getSensorName());
         newSensorItem.setSensorType(sensor.getSensorType());
         newSensorItem.setSensorStatus(sensor.getSensorStatus());

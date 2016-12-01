@@ -6,10 +6,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.sensor.service.model.Sensor;
-import com.sensor.service.model.SensorDataResponse;
-import com.sensor.service.model.Vendor;
-import com.sensor.service.model.VirtualSensor;
+import com.sensor.service.model.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,15 +23,19 @@ public class VirtualSensorDAO {
     private List<Sensor> sensorResult=new ArrayList<>();
     private List<Vendor> vendorResult=new ArrayList<>();
 
-    static AmazonDynamoDBClient client = new AmazonDynamoDBClient(new ProfileCredentialsProvider()).withRegion(Regions.US_WEST_2);
+    static AmazonDynamoDBClient client = new AmazonDynamoDBClient(new ProfileCredentialsProvider(ApiConstants.path,ApiConstants.profile)).withRegion(Regions.US_WEST_2);
 
     public void createSensor(VirtualSensor virtualSensor){
 
-        VirtualSensor newVirtualSensor=new VirtualSensor();
-
         DynamoDBMapper mapper=new DynamoDBMapper(client);
 
-        newVirtualSensor.setVirtualSensorId(virtualSensor.getVirtualSensorId());
+        List<VirtualSensor> sensorScanList=new ArrayList<>();
+        DynamoDBScanExpression scanExpression=new DynamoDBScanExpression().withLimit(50);
+        sensorScanList=mapper.scan(VirtualSensor.class,scanExpression);
+        int id=sensorScanList.size()+1;
+
+        VirtualSensor newVirtualSensor=new VirtualSensor();
+        newVirtualSensor.setVirtualSensorId(id);
         newVirtualSensor.setVirtualSensorName(virtualSensor.getVirtualSensorName());
         newVirtualSensor.setSensorId(virtualSensor.getSensorId());
         newVirtualSensor.setUserEmail(virtualSensor.getUserEmail());

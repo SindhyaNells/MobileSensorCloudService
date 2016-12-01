@@ -6,6 +6,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.sensor.service.model.ApiConstants;
 import com.sensor.service.model.Plan;
 
 import java.util.ArrayList;
@@ -21,13 +22,12 @@ public class PlanDAO {
 
     private List<Plan> plan_list=new ArrayList<>();
     private List<Plan> planResult=new ArrayList<>();
-    static AmazonDynamoDBClient client = new AmazonDynamoDBClient(new ProfileCredentialsProvider());
+    static AmazonDynamoDBClient client = new AmazonDynamoDBClient(new ProfileCredentialsProvider(ApiConstants.path,ApiConstants.profile)).withRegion(Regions.US_WEST_2);;
 
     public List planList(Integer planId){
 
         try {
 
-            client.withRegion(Regions.US_WEST_2);
             DynamoDBMapper mapper = new DynamoDBMapper(client);
 
             if(!(planId==0)) {

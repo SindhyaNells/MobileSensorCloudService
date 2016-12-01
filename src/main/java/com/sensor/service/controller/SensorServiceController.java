@@ -99,6 +99,34 @@ public class SensorServiceController {
         return sensorList;
     }
 
+    @RequestMapping(value="/virtualSensorGroup",method=RequestMethod.POST)
+    public ResponseEntity<VirtualSensorGroup> createVirtualSensor(@RequestBody VirtualSensorGroup virtualSensorGrp){
+
+        VirtualSensorGroupDAO virtualSensorGrpDAO=new VirtualSensorGroupDAO();
+        virtualSensorGrpDAO.createSensorGroup(virtualSensorGrp);
+        return new ResponseEntity<VirtualSensorGroup>(virtualSensorGrp,HttpStatus.CREATED);
+
+    }
+
+    @RequestMapping(value="/virtualSensorGroup/{id}",method = RequestMethod.DELETE)
+    public ResponseEntity<VirtualSensorGroup> deleteVirtualSensorGroup(@PathVariable("id") int id){
+        VirtualSensorGroupDAO virtualSensorGroupDAO=new VirtualSensorGroupDAO();
+        virtualSensorGroupDAO.deleteVirtualSensorGroup(id);
+        VirtualSensorGroup virtualSensorGrp=virtualSensorGroupDAO.findByVirtualSensorGrpId(id);
+        if(virtualSensorGrp==null){
+            return new ResponseEntity<VirtualSensorGroup>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<VirtualSensorGroup>(virtualSensorGrp,HttpStatus.NO_CONTENT);
+    }
+
+    @RequestMapping(value = "/virtualSensorGroup",method=RequestMethod.GET)
+    public List virtualsensorsgroup(@RequestParam(value = "user_email", required = false,defaultValue = "0") String user_email){
+        VirtualSensorGroupDAO virtualsensorDAO=new VirtualSensorGroupDAO();
+        List<VirtualSensorGroup> grpList=virtualsensorDAO.virtualSensorGroupList(user_email);
+        return grpList;
+    }
+
+
     @RequestMapping(value="/users",method = RequestMethod.PUT)
     public ResponseEntity<Users> updateUser(@RequestBody Users users){
         UserDAO userDAO=new UserDAO();

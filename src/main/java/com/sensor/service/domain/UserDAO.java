@@ -6,6 +6,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.sensor.service.model.ApiConstants;
 import com.sensor.service.model.Sensor;
 import com.sensor.service.model.Users;
 
@@ -23,7 +24,7 @@ public class UserDAO {
 
     public List<Users> user_list=new ArrayList<>();
     List<Users> userResult=new ArrayList<>();
-    static AmazonDynamoDBClient client = new AmazonDynamoDBClient(new ProfileCredentialsProvider()).withRegion(Regions.US_WEST_2);
+    static AmazonDynamoDBClient client = new AmazonDynamoDBClient(new ProfileCredentialsProvider(ApiConstants.path,ApiConstants.profile)).withRegion(Regions.US_WEST_2);
 
     public List userList(String userEmail){
 
