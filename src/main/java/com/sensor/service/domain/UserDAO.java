@@ -7,8 +7,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.sensor.service.model.ApiConstants;
-import com.sensor.service.model.Sensor;
-import com.sensor.service.model.Users;
+import com.sensor.service.model.db.users.Users;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,18 +18,19 @@ import java.util.Map;
  * Created by sindhya on 11/12/16.
  */
 
-
 public class UserDAO {
 
     public List<Users> user_list=new ArrayList<>();
     List<Users> userResult=new ArrayList<>();
     static AmazonDynamoDBClient client = new AmazonDynamoDBClient(new ProfileCredentialsProvider(ApiConstants.path,ApiConstants.profile)).withRegion(Regions.US_WEST_2);
-
+    static DynamoDBMapper mapper;
+    public UserDAO(){
+        mapper = new DynamoDBMapper(client);
+    }
+    
     public List userList(String userEmail){
 
         try {
-
-            DynamoDBMapper mapper = new DynamoDBMapper(client);
 
             if(!(userEmail.equals("0"))) {
 
@@ -68,8 +68,6 @@ public class UserDAO {
 
         Users newUserItem=new Users();
 
-        DynamoDBMapper mapper=new DynamoDBMapper(client);
-
         newUserItem.setUserName(user.getUserName());
         newUserItem.setUserEmail(user.getUserEmail());
         newUserItem.setUserPassword(user.getUserPassword());
@@ -81,7 +79,6 @@ public class UserDAO {
 
     public void updateUser(Users users){
 
-        DynamoDBMapper mapper = new DynamoDBMapper(client);
         mapper.save(users);
 
     }

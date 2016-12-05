@@ -1,4 +1,4 @@
-package com.sensor.service.model;
+package com.sensor.service.model.db.sensor.virtual;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;

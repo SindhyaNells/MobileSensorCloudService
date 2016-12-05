@@ -1,9 +1,19 @@
 package com.sensor.service.controller;
 
 import com.sensor.service.domain.*;
-import com.sensor.service.model.*;
-import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
-import org.omg.CORBA.Request;
+import com.sensor.service.mapper.SensorDataMapper;
+import com.sensor.service.model.db.plan.Plan;
+import com.sensor.service.model.db.sensor.data.SensorData;
+import com.sensor.service.model.db.sensor.physical.Sensor;
+import com.sensor.service.model.service.GetSensorDataResponse;
+import com.sensor.service.model.service.GetSensorDataTimeRange;
+import com.sensor.service.model.service.SensorDataRequest;
+import com.sensor.service.model.db.sensor.virtual.VirtualSensor;
+import com.sensor.service.model.db.sensor.virtual.VirtualSensorGroup;
+import com.sensor.service.model.db.users.Users;
+import com.sensor.service.model.db.vendor.Vendor;
+import com.sensor.service.util.DateFormattingUtil;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +26,6 @@ import java.util.List;
  * Created by sindhya on 11/12/16.
  */
 
-@CrossOrigin
 @RestController
 public class SensorServiceController {
 
@@ -188,19 +197,28 @@ public class SensorServiceController {
         return new ResponseEntity<VirtualSensor>(virtualSensor,HttpStatus.NO_CONTENT);
     }
 
-    @RequestMapping(value="/sensor_data/{id}", method=RequestMethod.GET)
-    public ResponseEntity<SensorDataResponse> getAllSensorData(@PathVariable("id") int id){
+    @RequestMapping(value="/sensor_data/{id}", method=RequestMethod.POST)
+    public ResponseEntity<GetSensorDataResponse> getSensorData(@PathVariable("id") int id,
+                                                               @RequestBody GetSensorDataTimeRange timeRange) {
 
-        SensorDataDAO sd = new SensorDataDAO();
-        Hashtable<Date, Integer> sensorData =  sd.sensorDataList(1);
+        SensorDataDAO sdDao = new SensorDataDAO();
+        Date fromDate = DateFormattingUtil.convertStringToDate(timeRange.getFrom());
+        Date toDate = DateFormattingUtil.convertStringToDate(timeRange.getTo());
+            
+        List<SensorData> sensorData =  sdDao.sensorDataListWithDate(id, fromDate, toDate);
 
         if (sensorData==null)
-            return new ResponseEntity<SensorDataResponse>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-        SensorDataResponse ssr = new SensorDataResponse();
-        ssr.setSensorData(sensorData);
-        ssr.setSensorDataPoint("Temperature");
-        return new ResponseEntity<SensorDataResponse>(ssr, HttpStatus.OK);
+        GetSensorDataResponse ssr = new GetSensorDataResponse();
+        SensorDataMapper.mapSensorData(sensorData, ssr);
+        return new ResponseEntity<>(ssr, HttpStatus.OK);
+    }
+
+    @RequestMapping(value="/sensor_data", method=RequestMethod.PUT)
+    public void putSensorData(@RequestBody SensorDataRequest sensorDataRequest){
+        SensorDataDAO sd = new SensorDataDAO();
+        sd.persistSensorData(sensorDataRequest);
     }
 
 }

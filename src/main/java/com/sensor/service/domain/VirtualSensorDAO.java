@@ -7,6 +7,9 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.sensor.service.model.*;
+import com.sensor.service.model.db.sensor.physical.Sensor;
+import com.sensor.service.model.db.sensor.virtual.VirtualSensor;
+import com.sensor.service.model.db.vendor.Vendor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
