@@ -26,6 +26,7 @@ import java.util.List;
  * Created by sindhya on 11/12/16.
  */
 
+@CrossOrigin
 @RestController
 public class SensorServiceController {
 
