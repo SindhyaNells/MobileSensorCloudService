@@ -8,24 +8,24 @@ import java.util.Date;
  * Created by rnellaiappan on 12/4/16.
  */
 public class SensorDataPoint {
-  String timestamp;
+  Date timestamp;
   String data;
   
   public SensorDataPoint(){
     
   }
   
-  public SensorDataPoint(String timestamp, String data){
+  public SensorDataPoint(Date timestamp, String data){
     this.data = data;
     this.timestamp = timestamp;
     return;
   }
 
-  public String getTimestamp() {
+  public Date getTimestamp() {
     return timestamp;
   }
 
-  public void setTimestamp(String timestamp) {
+  public void setTimestamp(Date timestamp) {
     this.timestamp = timestamp;
   }
 

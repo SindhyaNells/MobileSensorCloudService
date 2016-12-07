@@ -202,17 +202,11 @@ public class SensorServiceController {
     public ResponseEntity<GetSensorDataResponse> getSensorData(@PathVariable("id") int id,
                                                                @RequestBody GetSensorDataTimeRange timeRange) {
 
-        SensorDataDAO sdDao = new SensorDataDAO();
-        Date fromDate = DateFormattingUtil.convertStringToDate(timeRange.getFrom());
-        Date toDate = DateFormattingUtil.convertStringToDate(timeRange.getTo());
-            
-        List<SensorData> sensorData =  sdDao.sensorDataListWithDate(id, fromDate, toDate);
+        GetSensorDataResponse ssr = SensorDataMapper.getSensorDataForPhycalSensor(timeRange, id);
 
-        if (sensorData==null)
+        if (ssr==null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-        GetSensorDataResponse ssr = new GetSensorDataResponse();
-        SensorDataMapper.mapSensorData(sensorData, ssr);
         return new ResponseEntity<>(ssr, HttpStatus.OK);
     }
 

@@ -11,6 +11,15 @@ public class GetSensorDataResponse {
 
     List<SensorDataPoint> sensorDataPoints;
     String sensorDataType;
+    Integer physicalSensorId;
+
+    public Integer getPhysicalSensorId() {
+        return physicalSensorId;
+    }
+
+    public void setPhysicalSensorId(Integer physicalSensorId) {
+        this.physicalSensorId = physicalSensorId;
+    }
 
     public List<SensorDataPoint> getSensorDataPoints() {
         return sensorDataPoints;

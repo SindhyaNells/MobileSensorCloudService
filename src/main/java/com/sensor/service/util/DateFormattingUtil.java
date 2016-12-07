@@ -17,6 +17,8 @@ public class DateFormattingUtil {
   }
   
   public static Date convertStringToDate(String date){
+    if (date == null)
+      return null;
     dateFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
     Date convertedDate = new Date();
     try {
