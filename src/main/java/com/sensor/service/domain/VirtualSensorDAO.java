@@ -102,44 +102,29 @@ public class VirtualSensorDAO {
                 virtual_sensor_list.add(virtualsensorObj);
             }
 
-            /*for(int i=0;i<virtualSensorResult.size();i++){
-                Map<String, AttributeValue> filterMap1 = new HashMap<>();
-                filterMap1.put(":val2", new AttributeValue().withN(String.valueOf(virtualSensorResult.get(i).getSensorId())));
-
-                DynamoDBScanExpression sensorScanExpression = new DynamoDBScanExpression()
-                        .withFilterExpression("sensor_id=:val2").withExpressionAttributeValues(filterMap1);
-                sensorResult=mapper.scan(Sensor.class,sensorScanExpression);
-
-                VirtualSensor virtualsensorObj=new VirtualSensor();
-                virtualsensorObj.setSensorName(sensorResult.get(0).getSensorName());
-                virtualsensorObj.setSensorType(sensorResult.get(0).getSensorType());
-                virtualsensorObj.setSensorLocation(sensorResult.get(0).getSensorLocation());
-                virtualsensorObj.setSensorStatus(sensorResult.get(0).getSensorStatus());
-                virtual_sensor_list.add(virtualsensorObj);
-
-            }
-
-            for(int i=0;i<sensorResult.size();i++){
-
-                Map<String, AttributeValue> filterMap2 = new HashMap<>();
-                filterMap2.put(":val3", new AttributeValue().withS(String.valueOf(sensorResult.get(i).getVendorEmail())));
-
-                DynamoDBScanExpression vendorScanExpression = new DynamoDBScanExpression()
-                        .withFilterExpression("vendor_email=:val3").withExpressionAttributeValues(filterMap2);
-                vendorResult=mapper.scan(Vendor.class,vendorScanExpression);
-
-                VirtualSensor virtualsensorObj=new VirtualSensor();
-                virtualsensorObj.setVendorName(vendorResult.get(0).getVendorName());
-                virtual_sensor_list.add(virtualsensorObj);
-
-            }*/
-
-
         } catch (Throwable t) {
             t.printStackTrace();
         }
 
         return virtual_sensor_list;
+    }
+
+    public int getPhysicalSensorID(int virtual_sensor_id){
+
+        int physical_sensor_id;
+
+        DynamoDBMapper mapper=new DynamoDBMapper(client);
+        Map<String, AttributeValue> filterMap = new HashMap<>();
+        filterMap.put(":val1", new AttributeValue().withN(String.valueOf(virtual_sensor_id)));
+
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
+                .withFilterExpression("virtual_sensor_id=:val1").withExpressionAttributeValues(filterMap);
+        virtualSensorResult=mapper.scan(VirtualSensor.class,scanExpression);
+
+        physical_sensor_id=virtualSensorResult.get(0).getSensorId();
+
+        return physical_sensor_id;
+
     }
 
     public VirtualSensor findByVirtualSensorId(int virtual_sensor_id){

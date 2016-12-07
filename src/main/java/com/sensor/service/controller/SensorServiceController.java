@@ -7,6 +7,7 @@ import com.sensor.service.model.db.sensor.data.SensorData;
 import com.sensor.service.model.db.sensor.physical.Sensor;
 import com.sensor.service.model.service.GetSensorDataResponse;
 import com.sensor.service.model.service.GetSensorDataTimeRange;
+import com.sensor.service.model.service.GetVirtualSensorDataResponse;
 import com.sensor.service.model.service.SensorDataRequest;
 import com.sensor.service.model.db.sensor.virtual.VirtualSensor;
 import com.sensor.service.model.db.sensor.virtual.VirtualSensorGroup;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
@@ -202,7 +204,7 @@ public class SensorServiceController {
     public ResponseEntity<GetSensorDataResponse> getSensorData(@PathVariable("id") int id,
                                                                @RequestBody GetSensorDataTimeRange timeRange) {
 
-        GetSensorDataResponse ssr = SensorDataMapper.getSensorDataForPhycalSensor(timeRange, id);
+        GetSensorDataResponse ssr = SensorDataMapper.getSensorDataForPhysicalSensor(timeRange, id);
 
         if (ssr==null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -215,5 +217,31 @@ public class SensorServiceController {
         SensorDataDAO sd = new SensorDataDAO();
         sd.persistSensorData(sensorDataRequest);
     }
+
+    @RequestMapping(value="/virtual_sensor_group_data/{id}", method = RequestMethod.POST)
+    public ResponseEntity<GetVirtualSensorDataResponse> getVirtualSensorData(@PathVariable("id") int group_id,
+                                                                             @RequestBody GetSensorDataTimeRange timeRange){
+
+        VirtualSensorGroupDAO virtualSensorGroupDAO=new VirtualSensorGroupDAO();
+        VirtualSensorGroup virtualSensorGroup=virtualSensorGroupDAO.findByVirtualSensorGrpId(group_id);
+        List<Integer> virtualSensorList=virtualSensorGroup.getVirtualSensorId();
+
+
+        GetVirtualSensorDataResponse getVirtualSensorDataResponse=new GetVirtualSensorDataResponse();
+
+        List<GetSensorDataResponse> sensorDataResponseArrayList=new ArrayList<>();
+
+        for(int i=0;i<virtualSensorList.size();i++){
+            int virtual_sensor_id=virtualSensorList.get(i);
+            VirtualSensorDAO virtualSensorDAO=new VirtualSensorDAO();
+            int physical_sensor_id = virtualSensorDAO.getPhysicalSensorID(virtual_sensor_id);
+            sensorDataResponseArrayList.add(SensorDataMapper.getSensorDataForPhysicalSensor(timeRange,physical_sensor_id));
+        }
+        getVirtualSensorDataResponse.setAllSensorData(sensorDataResponseArrayList);
+
+        return new ResponseEntity<>(getVirtualSensorDataResponse,HttpStatus.OK);
+
+    }
+
 
 }

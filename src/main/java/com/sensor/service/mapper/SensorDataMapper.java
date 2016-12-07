@@ -36,7 +36,7 @@ public class SensorDataMapper {
   }
 
 
-  public static GetSensorDataResponse getSensorDataForPhycalSensor(GetSensorDataTimeRange timeRange,
+  public static GetSensorDataResponse getSensorDataForPhysicalSensor(GetSensorDataTimeRange timeRange,
                                                                    Integer p_sensor_id){
     SensorDataDAO sdDao = new SensorDataDAO();
     Date fromDate = DateFormattingUtil.convertStringToDate(timeRange.getFrom());
@@ -49,6 +49,10 @@ public class SensorDataMapper {
 
     GetSensorDataResponse ssr = new GetSensorDataResponse();
     SensorDataMapper.mapSensorData(sensorData, ssr);
+    ssr.setPhysicalSensorId(p_sensor_id);
     return ssr;
   }
+
+
+
 }

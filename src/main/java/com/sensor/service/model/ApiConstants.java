@@ -5,7 +5,7 @@ package com.sensor.service.model;
  */
 public class ApiConstants {
 
-    public static final String path="/Users/nandhu/IdeaProjects/SensorService/src/main/resources/credentials";
+    public static final String path="/home/ec2-user/.aws/credentials";
     public static final String profile="default";
 
 
