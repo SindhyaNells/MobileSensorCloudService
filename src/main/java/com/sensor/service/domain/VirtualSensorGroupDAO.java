@@ -1,5 +1,6 @@
 package com.sensor.service.domain;
 
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
@@ -22,7 +23,8 @@ public class VirtualSensorGroupDAO {
     private List<VirtualSensorGroup> virtual_sensor_grp_list=new ArrayList<>();
     private List<VirtualSensorGroup> virtualSensorGrpResult=new ArrayList<>();
 
-    static AmazonDynamoDBClient client = new AmazonDynamoDBClient(new ProfileCredentialsProvider(ApiConstants.path,ApiConstants.profile)).withRegion(Regions.US_WEST_2);
+    static BasicAWSCredentials credentials = new BasicAWSCredentials(ApiConstants.ACCESS_KEY, ApiConstants.SECRET_KEY);
+    static AmazonDynamoDBClient client = new AmazonDynamoDBClient(credentials).withRegion(Regions.US_WEST_2);
 
     public void createSensorGroup(VirtualSensorGroup virtualSensorGrp){
 
