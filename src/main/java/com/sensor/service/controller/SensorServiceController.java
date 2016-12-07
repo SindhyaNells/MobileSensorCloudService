@@ -3,8 +3,8 @@ package com.sensor.service.controller;
 import com.sensor.service.domain.*;
 import com.sensor.service.mapper.SensorDataMapper;
 import com.sensor.service.model.db.plan.Plan;
-import com.sensor.service.model.db.sensor.data.SensorData;
 import com.sensor.service.model.db.sensor.physical.Sensor;
+import com.sensor.service.model.service.GetBillingInfo;
 import com.sensor.service.model.service.GetSensorDataResponse;
 import com.sensor.service.model.service.GetSensorDataTimeRange;
 import com.sensor.service.model.service.GetVirtualSensorDataResponse;
@@ -13,16 +13,15 @@ import com.sensor.service.model.db.sensor.virtual.VirtualSensor;
 import com.sensor.service.model.db.sensor.virtual.VirtualSensorGroup;
 import com.sensor.service.model.db.users.Users;
 import com.sensor.service.model.db.vendor.Vendor;
-import com.sensor.service.util.DateFormattingUtil;
+import com.sensor.service.model.service.SetVirualSensorStatusRequest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by sindhya on 11/12/16.
@@ -132,7 +131,8 @@ public class SensorServiceController {
     }
 
     @RequestMapping(value = "/virtualSensorGroup",method=RequestMethod.GET)
-    public List virtualsensorsgroup(@RequestParam(value = "user_email", required = false,defaultValue = "0") String user_email){
+    public List virtualsensorsgroup(
+        @RequestParam(value = "user_email", required = false,defaultValue = "0") String user_email){
         VirtualSensorGroupDAO virtualsensorDAO=new VirtualSensorGroupDAO();
         List<VirtualSensorGroup> grpList=virtualsensorDAO.virtualSensorGroupList(user_email);
         return grpList;
@@ -154,7 +154,8 @@ public class SensorServiceController {
     }
 
     @RequestMapping(value="/sensors/{id}",method=RequestMethod.PUT)
-    public ResponseEntity<Sensor> updateSensor(@PathVariable("id") int id,@RequestBody Sensor sensor){
+    public ResponseEntity<Sensor> updateSensor(@PathVariable("id") int id,
+                                               @RequestBody Sensor sensor){
 
         SensorDAO sensorDAO=new SensorDAO();
         Sensor newSensor=sensorDAO.findBySensorId(id);
@@ -243,5 +244,29 @@ public class SensorServiceController {
 
     }
 
+    
+    
+    
+    @RequestMapping(value = "/sensor_status/{status}", method = RequestMethod.POST) 
+    public ResponseEntity<String> setVirtualSensorStatus(@PathVariable("status")String status, 
+                                                                         @RequestBody SetVirualSensorStatusRequest sensorStatusRequest) {
+        VirtualSensorDAO virtualSensorDAO = new VirtualSensorDAO();
+        String result = virtualSensorDAO.startStopVirtualSensor(sensorStatusRequest.getSensorId(),
+            sensorStatusRequest.getUserId(),status);
+        if (result==null || result.isEmpty())
+            return new ResponseEntity<String>("", HttpStatus.NOT_FOUND);
+        
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
 
+    @RequestMapping(value = "/get_billing/{user_email}", method = RequestMethod.GET)
+    public ResponseEntity<GetBillingInfo> getBillingInfo(@PathVariable("user_email") String userEmail) {
+        GetBillingInfo bill = new GetBillingInfo();
+        VirtualSensorDAO vsDAO = new VirtualSensorDAO();
+        Map<Integer,Double> billMap =  vsDAO.getVirtualSensorBillingInfo(userEmail);
+        if (billMap.size() <=0)
+            return new ResponseEntity<>(bill,HttpStatus.NOT_FOUND);
+        bill.setAmountMap(billMap);
+        return new ResponseEntity<>(bill,HttpStatus.OK);
+    }
 }
